@@ -14,6 +14,8 @@
             color: white;
             overflow-x: hidden;
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
 
         .board-container {
@@ -56,6 +58,7 @@
             padding: 0 20px;
             border-radius: 8px;
             border: 2px solid #3b82f6;
+            box-sizing: border-box;
         }
 
         .flip-card-front {
@@ -99,7 +102,7 @@
             color: #ef4444;
             font-weight: bold;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            height: 80px; /* Fixed height to prevent layout shift */
+            height: 80px;
         }
         
         .strike-mark {
@@ -141,4 +144,272 @@
             font-weight: bold;
             text-align: center;
             width: 100%;
-            ou
+            outline: none;
+            border-bottom: 1px dashed rgba(255,255,255,0.3);
+            margin-bottom: 10px;
+        }
+
+        .team-score {
+            font-size: 3rem;
+            font-weight: 900;
+            font-family: 'Courier New', Courier, monospace;
+            color: #fbbf24;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .screen {
+            display: none !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .screen.active {
+            display: flex !important;
+        }
+        
+        .answer-text {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Screen 1: Welcome / Setup -->
+    <div id="welcome-screen" class="screen active">
+        <h1 class="text-5xl md:text-6xl font-black mb-2 text-center text-yellow-400 drop-shadow-lg">EDU FAMILY 100</h1>
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-blue-200 uppercase tracking-wider">Showdown</h2>
+        
+        <div class="bg-black/40 p-6 md:p-8 rounded-xl border border-blue-500 w-full max-w-2xl mb-8">
+            <h3 class="text-xl md:text-2xl font-semibold mb-6 text-center border-b border-blue-500/50 pb-2">Topik: Aljabar (Kelas 8)</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="text-center">
+                    <label class="block text-sm font-medium mb-2 text-blue-300">Nama Tim 1</label>
+                    <input type="text" id="setup-team1" value="TIM A" class="w-full bg-blue-900/50 border border-blue-400 rounded p-3 text-center text-xl font-bold text-white focus:outline-none focus:border-yellow-400">
+                </div>
+                <div class="text-center">
+                    <label class="block text-sm font-medium mb-2 text-red-300">Nama Tim 2</label>
+                    <input type="text" id="setup-team2" value="TIM B" class="w-full bg-red-900/50 border border-red-400 rounded p-3 text-center text-xl font-bold text-white focus:outline-none focus:border-yellow-400">
+                </div>
+            </div>
+        </div>
+
+        <button onclick="startGame()" class="px-8 py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-black text-xl md:text-2xl rounded-full shadow-xl transform transition hover:scale-105 active:scale-95 border-2 border-yellow-300 cursor-pointer">
+            MULAI PERMAINAN <i class="fas fa-play ml-2"></i>
+        </button>
+    </div>
+
+    <!-- Screen 2: Main Game Board -->
+    <div id="game-screen" class="screen w-full max-w-6xl mx-auto">
+        
+        <!-- Header: Round & Question -->
+        <div class="w-full text-center mb-6">
+            <div class="inline-block bg-yellow-500 text-black font-bold px-6 py-1 rounded-full mb-3 shadow-md">
+                RONDE <span id="round-display">1</span> / 10
+            </div>
+            <h2 id="question-display" class="text-xl md:text-3xl font-semibold text-white drop-shadow-md bg-black/40 p-4 rounded-xl border border-blue-400/50">
+                Pertanyaan memuat...
+            </h2>
+        </div>
+
+        <!-- Middle Section: Scores, Board, Strikes -->
+        <div class="w-full grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
+            
+            <!-- Team 1 Score -->
+            <div id="team1-box" class="team-box active-team lg:col-span-1">
+                <input type="text" id="name-team1" class="team-name-input" onchange="updateTeamName(1, this.value)">
+                <div id="score-team1" class="team-score">0</div>
+                <button onclick="setActiveTeam(1)" class="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-sm font-bold w-full border border-blue-400 transition-colors">SET AKTIF</button>
+            </div>
+
+            <!-- Survey Board -->
+            <div class="board-container lg:col-span-2 bg-black/40 p-4 rounded-xl border-4 border-blue-900 shadow-2xl">
+                <!-- Strikes Display -->
+                <div id="strikes-display" class="strike-container mb-4">
+                    <span class="strike-mark" id="strike-1">X</span>
+                    <span class="strike-mark" id="strike-2">X</span>
+                    <span class="strike-mark" id="strike-3">X</span>
+                </div>
+                
+                <!-- Answer Cards Container -->
+                <div id="answers-container">
+                    <!-- Cards injected via JS -->
+                </div>
+                
+                <!-- Round Total Box -->
+                <div class="mt-4 bg-blue-900/80 border-2 border-blue-400 rounded-lg p-3 text-center flex justify-between items-center">
+                    <span class="font-bold text-lg text-blue-200">TOTAL POIN RONDE:</span>
+                    <span id="round-total" class="font-mono text-3xl font-bold text-yellow-400">0</span>
+                </div>
+            </div>
+
+            <!-- Team 2 Score -->
+            <div id="team2-box" class="team-box lg:col-span-1">
+                <input type="text" id="name-team2" class="team-name-input text-red-200" onchange="updateTeamName(2, this.value)">
+                <div id="score-team2" class="team-score text-red-400">0</div>
+                <button onclick="setActiveTeam(2)" class="mt-4 px-4 py-2 bg-red-700 hover:bg-red-600 rounded text-sm font-bold w-full border border-red-500 transition-colors">SET AKTIF</button>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Input & Controls -->
+        <div class="w-full mt-8 bg-black/50 p-6 rounded-xl border border-gray-600 flex flex-col md:flex-row gap-4 items-center justify-between shadow-lg">
+            
+            <div class="flex-1 w-full flex gap-2">
+                <input type="text" id="answer-input" placeholder="Ketik jawaban di sini..." class="flex-1 bg-gray-800 border-2 border-gray-500 rounded-lg p-3 text-xl text-white focus:outline-none focus:border-yellow-400 shadow-inner" onkeypress="handleEnter(event)">
+                <button onclick="checkAnswer()" class="bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow border border-green-400 transition-transform active:scale-95">
+                    CEK
+                </button>
+            </div>
+            
+            <div class="flex gap-2 w-full md:w-auto">
+                 <button onclick="addStrike()" class="flex-1 md:flex-none bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-lg shadow border border-red-400 transition-transform active:scale-95">
+                    <i class="fas fa-times mr-1"></i> SALAH
+                </button>
+                <button onclick="bankPoints()" class="flex-1 md:flex-none bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg shadow border border-yellow-400 transition-transform active:scale-95">
+                    <i class="fas fa-coins mr-1"></i> TRANSFER POIN
+                </button>
+                <button onclick="nextRound()" id="btn-next-round" class="flex-1 md:flex-none bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow border border-blue-400 transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                    RONDE SELANJUTNYA <i class="fas fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Final Score -->
+    <div id="final-screen" class="screen">
+        <canvas id="confetti-canvas"></canvas>
+        <h1 class="text-4xl md:text-5xl font-black mb-2 text-yellow-400 drop-shadow-lg z-10 text-center">PERMAINAN SELESAI!</h1>
+        <h2 id="winner-announcement" class="text-2xl md:text-3xl font-bold mb-12 text-white z-10 text-center">Pemenang: TIM A</h2>
+        
+        <div class="flex flex-col md:flex-row gap-8 mb-12 z-10">
+            <div class="bg-blue-900/80 p-8 rounded-2xl border-4 border-blue-500 text-center shadow-2xl min-w-[250px]">
+                <h3 id="final-name1" class="text-2xl font-bold mb-4 text-blue-200">TIM A</h3>
+                <div id="final-score1" class="text-6xl font-black text-yellow-400 font-mono">0</div>
+            </div>
+            <div class="bg-red-900/80 p-8 rounded-2xl border-4 border-red-500 text-center shadow-2xl min-w-[250px]">
+                <h3 id="final-name2" class="text-2xl font-bold mb-4 text-red-200">TIM B</h3>
+                <div id="final-score2" class="text-6xl font-black text-yellow-400 font-mono">0</div>
+            </div>
+        </div>
+
+        <button onclick="resetGame()" class="z-10 px-8 py-3 bg-white text-blue-900 font-bold text-xl rounded-full shadow-lg hover:bg-gray-200 transition-colors cursor-pointer">
+            MAIN LAGI <i class="fas fa-redo ml-2"></i>
+        </button>
+    </div>
+
+    <script>
+        // State Variables
+        let currentRound = 0;
+        let scores = { team1: 0, team2: 0 };
+        let activeTeam = 1;
+        let strikes = 0;
+        let roundTotal = 0;
+        let answersRevealed = 0;
+        let roundData = null;
+        let revealedIndexes = [];
+
+        function formatMathText(text) {
+            return text.replace(/\$([^\$]+)\$/g, '<span class="answer-text font-serif italic">$1</span>')
+                       .replace(/\^2/g, '²')
+                       .replace(/\\times/g, '×');
+        }
+
+        const questionBank = [
+          {
+            round: 1,
+            question: "Apa sajakah istilah atau unsur utama dalam bentuk aljabar $3x + 5$?",
+            answers: [
+              { rank: 1, points: 100, text: "Variabel", keywords: ["variabel", "variable", "peubah", "huruf", "x"] },
+              { rank: 2, points: 80, text: "Koefisien", keywords: ["koefisien", "angaka variabel", "angka depan x", "3"] },
+              { rank: 3, points: 60, text: "Konstanta", keywords: ["konstanta", "angka saja", "tetapan", "5"] },
+              { rank: 4, points: 40, text: "Suku", keywords: ["suku", "terms", "bagian aljabar", "suku sejenis"] },
+              { rank: 5, points: 20, text: "Operasi Hitung", keywords: ["operasi", "tambah", "penjumlahan", "simbol +", "plus"] }
+            ]
+          },
+          {
+            round: 2,
+            question: "Proses pemfaktoran $ab + ac = a(b + c)$ merupakan kebalikan dari operasi matematika apa saja?",
+            answers: [
+              { rank: 1, points: 100, text: "Perkalian Aljabar", keywords: ["perkalian", "kali", "perkalian aljabar", "mengali"] },
+              { rank: 2, points: 80, text: "Pengembangan / Jabaran", keywords: ["jabaran", "penjabaran", "ekspansi", "perluasan", "membuka kurung"] },
+              { rank: 3, points: 60, text: "Sifat Distributif", keywords: ["distributif", "sifat distributif", "pembagian distributif"] },
+              { rank: 4, points: 40, text: "Pengelompokan Suku", keywords: ["pengelompokan", "kelompok suku", "grouping"] },
+              { rank: 5, points: 20, text: "Pembagian Suku", keywords: ["pembagian", "bagi", "pembagi"] }
+            ]
+          },
+          {
+            round: 3,
+            question: "Sebutkan contoh bentuk aljabar yang bisa difaktorkan menggunakan faktor persekutuan (FPB)!",
+            answers: [
+              { rank: 1, points: 100, text: "$2x + 4$", keywords: ["2x+4", "2x + 4", "dua x plus empat", "2x tambah 4"] },
+              { rank: 2, points: 80, text: "$3x^2 + 6x$", keywords: ["3x^2+6x", "3x2+6x", "3x kuadrat + 6x", "3x kuadrat tambah 6x"] },
+              { rank: 3, points: 60, text: "$5xy - 10x$", keywords: ["5xy-10x", "5xy - 10x", "5xy min 10x", "5xy kurang 10x"] },
+              { rank: 4, points: 40, text: "$4a + 8b$", keywords: ["4a+8b", "4a + 8b", "4a tambah 8b"] },
+              { rank: 5, points: 20, text: "$x^2 + x$", keywords: ["x^2+x", "x2+x", "x kuadrat + x", "x kuadrat tambah x"] }
+            ]
+          },
+          {
+            round: 4,
+            question: "Apa saja langkah awal ketika hendak memfaktorkan bentuk aljabar $6x^2 + 9x$?",
+            answers: [
+              { rank: 1, points: 100, text: "Cari FPB Koefisien (yaitu 3)", keywords: ["fpb angka", "fpb koefisien", "cari fpb", "3", "fpb 6 dan 9"] },
+              { rank: 2, points: 80, text: "Cari FPB Variabel (yaitu x)", keywords: ["fpb variabel", "variabel sama", "x", "keluarkan x"] },
+              { rank: 3, points: 60, text: "Keluarkan Faktor Persekutuan $3x$", keywords: ["keluarkan 3x", "3x diluar", "faktor 3x"] },
+              { rank: 4, points: 40, text: "Bagi Suku Asli dengan $3x$", keywords: ["bagi 3x", "pembagian suku", "membagi suku"] },
+              { rank: 5, points: 20, text: "Tulis Sisa Suku $(2x + 3)$ di Kurung", keywords: ["dalam kurung", "sisa dalam kurung", "2x+3", "tulis kurung"] }
+            ]
+          },
+          {
+            round: 5,
+            question: "Sebutkan nama-nama bentuk kuadrat atau sifat khusus dalam pemfaktoran aljabar!",
+            answers: [
+              { rank: 1, points: 100, text: "Selisih Dua Kuadrat", keywords: ["selisih dua kuadrat", "selisih kuadrat", "x2-y2", "a2-b2"] },
+              { rank: 2, points: 80, text: "Kuadrat Sempurna", keywords: ["kuadrat sempurna", "perfect square", "bentuk kuadrat sempurna"] },
+              { rank: 3, points: 60, text: "Trinomial / Suku Tiga", keywords: ["trinomial", "suku tiga", "persamaan kuadrat"] },
+              { rank: 4, points: 40, text: "Binomial / Suku Dua", keywords: ["binomial", "suku dua"] },
+              { rank: 5, points: 20, text: "Bentuk Distributif", keywords: ["distributif", "sifat distributif"] }
+            ]
+          },
+          {
+            round: 6,
+            question: "Jika $(x + 3)(x + 2)$ dikalikan, apa saja suku hasil penjabarannya sebelum disederhanakan?",
+            answers: [
+              { rank: 1, points: 100, text: "$x^2$", keywords: ["x^2", "x2", "x kuadrat", "x kali x"] },
+              { rank: 2, points: 80, text: "$2x$", keywords: ["2x", "dua x", "x kali 2"] },
+              { rank: 3, points: 60, text: "$3x$", keywords: ["3x", "tiga x", "3 kali x"] },
+              { rank: 4, points: 40, text: "6", keywords: ["6", "enam", "3 kali 2"] },
+              { rank: 5, points: 20, text: "$x^2 + 5x + 6$ (Bentuk Akhir)", keywords: ["x^2+5x+6", "x2+5x+6", "hasil akhir", "x kuadrat plus 5x plus 6"] }
+            ]
+          },
+          {
+            round: 7,
+            question: "Sebutkan bentuk hasil pemfaktoran dari selisih dua kuadrat $x^2 - 16$!",
+            answers: [
+              { rank: 1, points: 100, text: "$(x - 4)$", keywords: ["x-4", "x - 4", "x minus 4", "x kurang 4"] },
+              { rank: 2, points: 80, text: "$(x + 4)$", keywords: ["x+4", "x + 4", "x plus 4", "x tambah 4"] },
+              { rank: 3, points: 60, text: "$(x - 4)(x + 4)$", keywords: ["(x-4)(x+4)", "(x+4)(x-4)", "x-4 x+4"] },
+              { rank: 4, points: 40, text: "Akar dari 16 adalah 4", keywords: ["4", "akar 16", "empat"] },
+              { rank: 5, points: 20, text: "Perkalian 2 Kurung Beda Tanda", keywords: ["beda tanda", "plus dan minus", "tambah dan kurang"] }
+            ]
+          },
+          {
+            round: 8,
+            question: "Apa saja syarat dua bilangan $p$ dan $q$ untuk memfaktorkan bentuk $x^2 + bx + c$ menjadi $(x + p)(x + q)$?",
+            answers: [
+              { rank: 1, points: 100, text: "Jika Dikalikan Hasilnya c", keywords: ["dikalikan c", "kali c", "hasil kali c", "p x q = c", "p*q=c"] },
+              { rank: 2, points: 80, text: "Jika Dijumlahkan Hasilnya b", keywords: ["dijumlahkan b", "tamba
