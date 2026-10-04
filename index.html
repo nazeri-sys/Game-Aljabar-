@@ -206,7 +206,7 @@
         <h1 class="text-4xl md:text-6xl font-black mb-2 text-center text-yellow-400 drop-shadow-lg">EDU FAMILY 100</h1>
         <h2 class="text-2xl md:text-4xl font-bold mb-6 text-center text-blue-200 uppercase tracking-wider">Showdown</h2>
         
-        <div class="bg-black/40 p-6 md:p-8 rounded-xl border border-blue-500 w-full max-w-2xl mb-8">
+        <div class="bg-black/40 p-6 md:p-8 rounded-xl border border-blue-500 w-full max-w-2xl mb-8 z-10">
             <h3 class="text-xl md:text-2xl font-semibold mb-6 text-center border-b border-blue-500/50 pb-2">Topik: Aljabar (Kelas 8)</h3>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -221,7 +221,8 @@
             </div>
         </div>
 
-        <button type="button" id="btn-start" class="btn-clickable px-8 py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-black text-xl md:text-2xl rounded-full shadow-xl transform transition active:scale-95 border-2 border-yellow-300">
+        <!-- TOMBOL MULAI YANG SUDAH DIPERBAIKI -->
+        <button onclick="startGame()" class="btn-clickable px-8 py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-400 hover:to-yellow-500 text-black font-black text-xl md:text-2xl rounded-full shadow-xl transform transition active:scale-95 border-2 border-yellow-300">
             MULAI PERMAINAN <i class="fas fa-play ml-2"></i>
         </button>
     </div>
@@ -293,10 +294,10 @@
                     <i class="fas fa-times mr-1"></i> SALAH
                 </button>
                 <button type="button" onclick="bankPoints()" class="btn-clickable flex-1 md:flex-none bg-yellow-600 hover:bg-yellow-500 text-black font-bold px-6 py-3 rounded-lg shadow border border-yellow-400">
-                    <i class="fas fa-coins mr-1"></i> TRANSFER POIN
+                    <i class="fas fa-coins mr-1"></i> TRANSFER
                 </button>
                 <button type="button" onclick="nextRound()" id="btn-next-round" class="btn-clickable flex-1 md:flex-none bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow border border-blue-400 disabled:opacity-50">
-                    RONDE SELANJUTNYA <i class="fas fa-arrow-right ml-1"></i>
+                    LANJUT <i class="fas fa-arrow-right ml-1"></i>
                 </button>
             </div>
         </div>
@@ -345,7 +346,7 @@
         const questionBank = [
           {
             round: 1,
-            question: "Apa sajakah istilah atau unsur utama dalam bentuk aljabar $3x + 5$?",
+            question: "Apa sajakah istilah atau unsur utama dalam bentuk aljabar 3x + 5?",
             answers: [
               { rank: 1, points: 100, text: "Variabel", keywords: ["variabel", "variable", "peubah", "huruf", "x"] },
               { rank: 2, points: 80, text: "Koefisien", keywords: ["koefisien", "angaka variabel", "angka depan x", "3"] },
@@ -356,7 +357,7 @@
           },
           {
             round: 2,
-            question: "Proses pemfaktoran $ab + ac = a(b + c)$ merupakan kebalikan dari operasi matematika apa saja?",
+            question: "Proses pemfaktoran ab + ac = a(b + c) merupakan kebalikan dari operasi matematika apa saja?",
             answers: [
               { rank: 1, points: 100, text: "Perkalian Aljabar", keywords: ["perkalian", "kali", "perkalian aljabar", "mengali"] },
               { rank: 2, points: 80, text: "Pengembangan / Jabaran", keywords: ["jabaran", "penjabaran", "ekspansi", "perluasan", "membuka kurung"] },
@@ -369,22 +370,22 @@
             round: 3,
             question: "Sebutkan contoh bentuk aljabar yang bisa difaktorkan menggunakan faktor persekutuan (FPB)!",
             answers: [
-              { rank: 1, points: 100, text: "$2x + 4$", keywords: ["2x+4", "2x + 4", "dua x plus empat", "2x tambah 4"] },
-              { rank: 2, points: 80, text: "$3x^2 + 6x$", keywords: ["3x^2+6x", "3x2+6x", "3x kuadrat + 6x", "3x kuadrat tambah 6x"] },
-              { rank: 3, points: 60, text: "$5xy - 10x$", keywords: ["5xy-10x", "5xy - 10x", "5xy min 10x", "5xy kurang 10x"] },
-              { rank: 4, points: 40, text: "$4a + 8b$", keywords: ["4a+8b", "4a + 8b", "4a tambah 8b"] },
-              { rank: 5, points: 20, text: "$x^2 + x$", keywords: ["x^2+x", "x2+x", "x kuadrat + x", "x kuadrat tambah x"] }
+              { rank: 1, points: 100, text: "2x + 4", keywords: ["2x+4", "2x + 4", "dua x plus empat", "2x tambah 4"] },
+              { rank: 2, points: 80, text: "3x² + 6x", keywords: ["3x^2+6x", "3x2+6x", "3x kuadrat + 6x", "3x kuadrat tambah 6x"] },
+              { rank: 3, points: 60, text: "5xy - 10x", keywords: ["5xy-10x", "5xy - 10x", "5xy min 10x", "5xy kurang 10x"] },
+              { rank: 4, points: 40, text: "4a + 8b", keywords: ["4a+8b", "4a + 8b", "4a tambah 8b"] },
+              { rank: 5, points: 20, text: "x² + x", keywords: ["x^2+x", "x2+x", "x kuadrat + x", "x kuadrat tambah x"] }
             ]
           },
           {
             round: 4,
-            question: "Apa saja langkah awal ketika hendak memfaktorkan bentuk aljabar $6x^2 + 9x$?",
+            question: "Apa saja langkah awal ketika hendak memfaktorkan bentuk aljabar 6x² + 9x?",
             answers: [
               { rank: 1, points: 100, text: "Cari FPB Koefisien (yaitu 3)", keywords: ["fpb angka", "fpb koefisien", "cari fpb", "3", "fpb 6 dan 9"] },
               { rank: 2, points: 80, text: "Cari FPB Variabel (yaitu x)", keywords: ["fpb variabel", "variabel sama", "x", "keluarkan x"] },
-              { rank: 3, points: 60, text: "Keluarkan Faktor Persekutuan $3x$", keywords: ["keluarkan 3x", "3x diluar", "faktor 3x"] },
-              { rank: 4, points: 40, text: "Bagi Suku Asli dengan $3x$", keywords: ["bagi 3x", "pembagian suku", "membagi suku"] },
-              { rank: 5, points: 20, text: "Tulis Sisa Suku $(2x + 3)$ di Kurung", keywords: ["dalam kurung", "sisa dalam kurung", "2x+3", "tulis kurung"] }
+              { rank: 3, points: 60, text: "Keluarkan Faktor 3x", keywords: ["keluarkan 3x", "3x diluar", "faktor 3x"] },
+              { rank: 4, points: 40, text: "Bagi Suku Asli dengan 3x", keywords: ["bagi 3x", "pembagian suku", "membagi suku"] },
+              { rank: 5, points: 20, text: "Tulis Sisa Suku di Kurung", keywords: ["dalam kurung", "sisa dalam kurung", "2x+3", "tulis kurung"] }
             ]
           },
           {
@@ -400,26 +401,442 @@
           },
           {
             round: 6,
-            question: "Jika $(x + 3)(x + 2)$ dikalikan, apa saja suku hasil penjabarannya sebelum disederhanakan?",
+            question: "Jika (x + 3)(x + 2) dikalikan, apa saja suku hasil penjabarannya sebelum disederhanakan?",
             answers: [
-              { rank: 1, points: 100, text: "$x^2$", keywords: ["x^2", "x2", "x kuadrat", "x kali x"] },
-              { rank: 2, points: 80, text: "$2x$", keywords: ["2x", "dua x", "x kali 2"] },
-              { rank: 3, points: 60, text: "$3x$", keywords: ["3x", "tiga x", "3 kali x"] },
+              { rank: 1, points: 100, text: "x²", keywords: ["x^2", "x2", "x kuadrat", "x kali x"] },
+              { rank: 2, points: 80, text: "2x", keywords: ["2x", "dua x", "x kali 2"] },
+              { rank: 3, points: 60, text: "3x", keywords: ["3x", "tiga x", "3 kali x"] },
               { rank: 4, points: 40, text: "6", keywords: ["6", "enam", "3 kali 2"] },
-              { rank: 5, points: 20, text: "$x^2 + 5x + 6$ (Bentuk Akhir)", keywords: ["x^2+5x+6", "x2+5x+6", "hasil akhir", "x kuadrat plus 5x plus 6"] }
+              { rank: 5, points: 20, text: "x² + 5x + 6 (Bentuk Akhir)", keywords: ["x^2+5x+6", "x2+5x+6", "hasil akhir", "x kuadrat plus 5x plus 6"] }
             ]
           },
           {
             round: 7,
-            question: "Sebutkan bentuk hasil pemfaktoran dari selisih dua kuadrat $x^2 - 16$!",
+            question: "Sebutkan bentuk hasil pemfaktoran dari selisih dua kuadrat x² - 16!",
             answers: [
-              { rank: 1, points: 100, text: "$(x - 4)$", keywords: ["x-4", "x - 4", "x minus 4", "x kurang 4"] },
-              { rank: 2, points: 80, text: "$(x + 4)$", keywords: ["x+4", "x + 4", "x plus 4", "x tambah 4"] },
-              { rank: 3, points: 60, text: "$(x - 4)(x + 4)$", keywords: ["(x-4)(x+4)", "(x+4)(x-4)", "x-4 x+4"] },
+              { rank: 1, points: 100, text: "(x - 4)", keywords: ["x-4", "x - 4", "x minus 4", "x kurang 4"] },
+              { rank: 2, points: 80, text: "(x + 4)", keywords: ["x+4", "x + 4", "x plus 4", "x tambah 4"] },
+              { rank: 3, points: 60, text: "(x - 4)(x + 4)", keywords: ["(x-4)(x+4)", "(x+4)(x-4)", "x-4 x+4"] },
               { rank: 4, points: 40, text: "Akar dari 16 adalah 4", keywords: ["4", "akar 16", "empat"] },
               { rank: 5, points: 20, text: "Perkalian 2 Kurung Beda Tanda", keywords: ["beda tanda", "plus dan minus", "tambah dan kurang"] }
             ]
           },
           {
             round: 8,
-            question: "Apa saja syarat dua bilangan $p$ dan $q$ untuk memfaktorkan bentuk $x^2 +
+            question: "Apa saja syarat dua bilangan p dan q untuk memfaktorkan bentuk x² + bx + c?",
+            answers: [
+              { rank: 1, points: 100, text: "Jika Dikalikan Hasilnya c", keywords: ["dikalikan c", "kali c", "hasil kali c", "p x q = c", "p*q=c"] },
+              { rank: 2, points: 80, text: "Jika Dijumlahkan Hasilnya b", keywords: ["dijumlahkan b", "tambah b", "hasil tambah b", "p + q = b"] },
+              { rank: 3, points: 60, text: "Memperhatikan Tanda Plus/Min", keywords: ["tanda", "positif negatif", "plus minus", "tanda positif negatif"] },
+              { rank: 4, points: 40, text: "Mencari Pasangan Faktor c", keywords: ["faktor c", "pasangan faktor", "faktor dari c"] },
+              { rank: 5, points: 20, text: "Koefisien x² Harus 1", keywords: ["koefisien 1", "depan x2 satu", "a = 1"] }
+            ]
+          },
+          {
+            round: 9,
+            question: "Apa kegunaan mempelajari pemfaktoran aljabar?",
+            answers: [
+              { rank: 1, points: 100, text: "Menyederhanakan Pecahan", keywords: ["menyederhanakan pecahan", "pecahan aljabar", "penyederhanaan"] },
+              { rank: 2, points: 80, text: "Menyelesaikan Persamaan Kuadrat", keywords: ["persamaan kuadrat", "mencari akar", "mencari x"] },
+              { rank: 3, points: 60, text: "Menghitung Luas Bangun", keywords: ["luas", "luas persegi", "luas persegi panjang", "geometri", "bangun datar"] },
+              { rank: 4, points: 40, text: "Hitung Cepat", keywords: ["hitung cepat", "tanpa kalkulator", "trik hitung", "memudahkan perhitungan"] },
+              { rank: 5, points: 20, text: "Persiapan Fisika / Ekonomi", keywords: ["fisika", "ekonomi", "rumus fisika", "soal cerita", "pelajaran lain"] }
+            ]
+          },
+          {
+            round: 10,
+            question: "Sebutkan kesalahan umum yang sering dilakukan siswa saat memfaktorkan aljabar!",
+            answers: [
+              { rank: 1, points: 100, text: "Salah Tanda Positif/Negatif", keywords: ["salah tanda", "tanda plus minus", "keliru min plus", "negatif", "positif"] },
+              { rank: 2, points: 80, text: "Lupa Keluarkan Variabel", keywords: ["lupa x", "variabel ketinggalan", "lupa variabel", "faktor variabel"] },
+              { rank: 3, points: 60, text: "Salah Menentukan FPB Angka", keywords: ["salah fpb", "fpb salah", "salah bagi", "hitung fpb"] },
+              { rank: 4, points: 40, text: "Tertukar Bentuk Kuadrat", keywords: ["tertukar bentuk", "dikira kuadrat sempurna", "salah rumus selisih", "beda bentuk"] },
+              { rank: 5, points: 20, text: "Lupa Cek Ulang dgn Perkalian", keywords: ["tidak mengecek", "tidak dikali ulang", "lupa cek", "periksa kembali"] }
+            ]
+          }
+        ];
+
+        let audioCtx = null;
+
+        function initAudio() {
+            try {
+                if (!audioCtx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        audioCtx = new AudioContext();
+                    }
+                }
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+            } catch (e) {
+                console.log("Audio disabled", e);
+            }
+        }
+
+        function playTone(freq, type, duration, vol=0.5) {
+            try {
+                if (!audioCtx) return;
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.type = type;
+                oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                
+                gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.start();
+                oscillator.stop(audioCtx.currentTime + duration);
+            } catch(e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        const sounds = {
+            correct: () => {
+                playTone(523.25, 'sine', 0.1);
+                setTimeout(() => playTone(659.25, 'sine', 0.2), 100);
+                setTimeout(() => playTone(783.99, 'sine', 0.4), 200);
+            },
+            wrong: () => {
+                playTone(150, 'sawtooth', 0.3, 0.8);
+                setTimeout(() => playTone(100, 'sawtooth', 0.4, 0.8), 250);
+            },
+            flip: () => {
+                playTone(800, 'triangle', 0.1, 0.2);
+            },
+            bank: () => {
+                playTone(1000, 'square', 0.1, 0.1);
+                setTimeout(() => playTone(1200, 'square', 0.2, 0.1), 100);
+            },
+            win: () => {
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, i) => {
+                    setTimeout(() => playTone(freq, 'square', 0.3), i * 150);
+                });
+                setTimeout(() => {
+                    playTone(392.00, 'square', 0.2);
+                    setTimeout(() => playTone(523.25, 'square', 0.6), 200);
+                }, notes.length * 150 + 100);
+            }
+        };
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        // --- FUNGSI UTAMA YANG SUDAH DIPERBAIKI ---
+        function startGame() {
+            try {
+                // Inisialisasi audio secara aman
+                initAudio();
+                
+                const name1 = document.getElementById('setup-team1').value || 'TIM A';
+                const name2 = document.getElementById('setup-team2').value || 'TIM B';
+                
+                document.getElementById('name-team1').value = name1;
+                document.getElementById('name-team2').value = name2;
+                
+                currentRound = 0;
+                scores = { team1: 0, team2: 0 };
+                updateScoreDisplay();
+                
+                switchScreen('game-screen');
+                loadRound(0);
+            } catch (err) {
+                console.error(err);
+                alert("Game dimulai tanpa suara.");
+                switchScreen('game-screen');
+                loadRound(0);
+            }
+        }
+
+        function updateTeamName(teamNum, name) {
+            if(teamNum === 1) document.getElementById('setup-team1').value = name;
+            if(teamNum === 2) document.getElementById('setup-team2').value = name;
+        }
+
+        function setActiveTeam(teamNum) {
+            activeTeam = teamNum;
+            document.getElementById('team1-box').classList.remove('active-team');
+            document.getElementById('team2-box').classList.remove('active-team');
+            
+            document.getElementById(`team${teamNum}-box`).classList.add('active-team');
+        }
+
+        function loadRound(index) {
+            if (index >= questionBank.length) {
+                endGame();
+                return;
+            }
+
+            roundData = questionBank[index];
+            currentRound = index;
+            revealedIndexes = [];
+            strikes = 0;
+            roundTotal = 0;
+            answersRevealed = 0;
+            
+            document.getElementById('round-display').innerText = roundData.round;
+            document.getElementById('question-display').innerHTML = formatMathText(roundData.question);
+            document.getElementById('round-total').innerText = '0';
+            
+            updateStrikesUI();
+            
+            const container = document.getElementById('answers-container');
+            container.innerHTML = '';
+            
+            roundData.answers.forEach((ans, i) => {
+                const card = document.createElement('div');
+                card.className = 'flip-card';
+                card.id = `card-${i}`;
+                card.setAttribute('onclick', `manualReveal(${i})`);
+                
+                card.innerHTML = `
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <span>${i + 1}</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <span class="text-left w-3/4">${formatMathText(ans.text)}</span>
+                            <span class="points-box">${ans.points}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            document.getElementById('answer-input').value = '';
+            document.getElementById('btn-next-round').disabled = false; 
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        }
+
+        function normalizeString(str) {
+            return str.toLowerCase()
+                      .replace(/[^\w\s\+]/gi, '')
+                      .replace(/\s+/g, ' ')
+                      .trim();
+        }
+
+        function checkAnswer() {
+            const inputEl = document.getElementById('answer-input');
+            const inputRaw = inputEl.value;
+            if (!inputRaw.trim()) return;
+            
+            const inputNorm = normalizeString(inputRaw);
+            let foundIndex = -1;
+
+            for (let i = 0; i < roundData.answers.length; i++) {
+                if (revealedIndexes.includes(i)) continue;
+                
+                const ans = roundData.answers[i];
+                const isMatch = ans.keywords.some(kw => {
+                    const kwNorm = normalizeString(kw);
+                    return inputNorm === kwNorm || inputNorm.includes(kwNorm);
+                });
+                
+                if (isMatch) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            inputEl.value = '';
+
+            if (foundIndex !== -1) {
+                revealAnswer(foundIndex);
+            } else {
+                addStrike();
+            }
+        }
+
+        function revealAnswer(index) {
+            if (revealedIndexes.includes(index)) return;
+            
+            revealedIndexes.push(index);
+            answersRevealed++;
+            
+            const card = document.getElementById(`card-${index}`);
+            if(card) card.classList.add('flipped');
+            
+            sounds.correct();
+            setTimeout(sounds.flip, 300);
+            
+            roundTotal += roundData.answers[index].points;
+            
+            const totalEl = document.getElementById('round-total');
+            totalEl.style.transform = 'scale(1.5)';
+            totalEl.style.color = '#fff';
+            setTimeout(() => {
+                totalEl.innerText = roundTotal;
+                totalEl.style.transform = 'scale(1)';
+                totalEl.style.color = '#fbbf24';
+            }, 200);
+        }
+
+        function manualReveal(index) {
+            if (!revealedIndexes.includes(index)) {
+                revealAnswer(index);
+            }
+        }
+
+        function addStrike() {
+            if (strikes >= 3) return;
+            
+            strikes++;
+            sounds.wrong();
+            updateStrikesUI();
+            
+            const board = document.querySelector('.board-container');
+            if(board) {
+                board.style.borderColor = '#ef4444';
+                setTimeout(() => { board.style.borderColor = '#1e3a8a'; }, 500);
+            }
+        }
+
+        function updateStrikesUI() {
+            for(let i=1; i<=3; i++) {
+                const strikeEl = document.getElementById(`strike-${i}`);
+                if(strikeEl) {
+                    if (i <= strikes) {
+                        strikeEl.classList.add('active');
+                    } else {
+                        strikeEl.classList.remove('active');
+                    }
+                }
+            }
+        }
+
+        function bankPoints() {
+            if (roundTotal === 0) return;
+            
+            sounds.bank();
+            scores[`team${activeTeam}`] += roundTotal;
+            updateScoreDisplay();
+            
+            const scoreEl = document.getElementById(`score-team${activeTeam}`);
+            if(scoreEl) {
+                scoreEl.style.transform = 'scale(1.5)';
+                scoreEl.style.color = '#fff';
+                setTimeout(() => {
+                    scoreEl.style.transform = 'scale(1)';
+                    scoreEl.style.color = activeTeam === 1 ? '#fbbf24' : '#f87171';
+                }, 400);
+            }
+
+            roundTotal = 0;
+            document.getElementById('round-total').innerText = roundTotal;
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-team1').innerText = scores.team1;
+            document.getElementById('score-team2').innerText = scores.team2;
+        }
+
+        function nextRound() {
+            loadRound(currentRound + 1);
+        }
+
+        function endGame() {
+            switchScreen('final-screen');
+            sounds.win();
+            
+            const name1 = document.getElementById('name-team1').value;
+            const name2 = document.getElementById('name-team2').value;
+            
+            document.getElementById('final-name1').innerText = name1;
+            document.getElementById('final-score1').innerText = scores.team1;
+            document.getElementById('final-name2').innerText = name2;
+            document.getElementById('final-score2').innerText = scores.team2;
+            
+            let winnerText = "Hasil Seri!";
+            if (scores.team1 > scores.team2) winnerText = `Pemenang: ${name1}!`;
+            if (scores.team2 > scores.team1) winnerText = `Pemenang: ${name2}!`;
+            
+            document.getElementById('winner-announcement').innerText = winnerText;
+            
+            startConfetti();
+        }
+
+        function resetGame() {
+            stopConfetti();
+            switchScreen('welcome-screen');
+        }
+
+        let confettiInterval;
+        function startConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            let particles = [];
+            const colors = ['#fce18a', '#ff726d', '#b48def', '#f4306d'];
+            
+            for(let i=0; i<150; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 5 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vy: Math.random() * 3 + 2,
+                    vx: Math.random() * 2 - 1,
+                    rot: Math.random() * 360,
+                    rotSpeed: Math.random() * 10 - 5
+                });
+            }
+            
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rot * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+                    ctx.restore();
+                    
+                    p.y += p.vy;
+                    p.x += p.vx;
+                    p.rot += p.rotSpeed;
+                    
+                    if (p.y > canvas.height) {
+                        p.y = -10;
+                        p.x = Math.random() * canvas.width;
+                    }
+                });
+                confettiInterval = requestAnimationFrame(render);
+            }
+            render();
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+        
+        function stopConfetti() {
+            if(confettiInterval) cancelAnimationFrame(confettiInterval);
+            const canvas = document.getElementById('confetti-canvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
+
+```
