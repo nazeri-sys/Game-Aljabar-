@@ -1,547 +1,695 @@
-```html
+
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EDU FAMILY 100 SHOWDOWN - Aljabar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kartu Belajar Aljabar Interaktif</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            500: '#06b6d4',
+                            600: '#0284c7',
+                            900: '#0f172a',
+                        }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.6', filter: 'drop-shadow(0 0 15px rgba(6, 182, 212, 0.5))' },
+                            '50%': { opacity: '1', filter: 'drop-shadow(0 0 25px rgba(168, 85, 247, 0.8))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- KaTeX CSS & JS for Rendering Math Formulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
     <style>
-        * {
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3a8a, #4338ca);
-            color: white;
-            overflow-x: hidden;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-
-        .board-container {
+            font-family: 'Plus Jakarta Sans', sans-serif;
             perspective: 1000px;
         }
 
-        .flip-card {
-            background-color: transparent;
-            width: 100%;
-            height: 60px;
+        .perspective-1000 {
             perspective: 1000px;
-            margin-bottom: 10px;
-            cursor: pointer;
         }
 
-        .flip-card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
+        .transform-style-3d {
             transform-style: preserve-3d;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-            border-radius: 8px;
         }
 
-        .flip-card.flipped .flip-card-inner {
-            transform: rotateX(180deg);
-        }
-
-        .flip-card-front, .flip-card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
+        .backface-hidden {
             backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            border-radius: 8px;
-            border: 2px solid #3b82f6;
-            box-sizing: border-box;
+            -webkit-backface-visibility: hidden;
         }
 
-        .flip-card-front {
-            background: linear-gradient(to right, #1e40af, #2563eb);
-            color: #93c5fd;
-            font-size: 1.5rem;
-            font-weight: bold;
-            justify-content: center;
+        .rotate-y-180 {
+            transform: rotateY(180deg);
         }
 
-        .flip-card-front span {
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
-        .flip-card-back {
-            background: linear-gradient(to right, #047857, #059669);
-            color: white;
-            transform: rotateX(180deg);
-            font-size: 1.2rem;
-            font-weight: bold;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-
-        .points-box {
-            background: #064e3b;
-            padding: 5px 15px;
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #06b6d4;
             border-radius: 4px;
-            font-size: 1.4rem;
-        }
-
-        .strike-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            font-size: 4rem;
-            color: #ef4444;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            height: 80px;
-        }
-        
-        .strike-mark {
-            opacity: 0.2;
-            transition: opacity 0.3s;
-        }
-
-        .strike-mark.active {
-            opacity: 1;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.1); }
-            50% { transform: scale(1.4); }
-            100% { transform: scale(1); }
-        }
-
-        .team-box {
-            background: rgba(0, 0, 0, 0.4);
-            border: 2px solid #3b82f6;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .team-box.active-team {
-            border-color: #fbbf24;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
-            background: rgba(30, 64, 175, 0.6);
-        }
-
-        .team-name-input {
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-            outline: none;
-            border-bottom: 1px dashed rgba(255,255,255,0.3);
-            margin-bottom: 10px;
-        }
-
-        .team-score {
-            font-size: 3rem;
-            font-weight: 900;
-            font-family: 'Courier New', Courier, monospace;
-            color: #fbbf24;
-            text-shadow: 2px 2px 0 #000;
-        }
-
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        .screen {
-            display: none !important;
-        }
-
-        .screen.active {
-            display: flex !important;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        
-        .answer-text {
-            font-family: 'Times New Roman', Times, serif;
-            font-style: italic;
-        }
-
-        .btn-clickable {
-            position: relative;
-            z-index: 9999;
-            cursor: pointer;
-            user-select: none;
         }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between overflow-x-hidden relative">
 
-    <!-- Screen 1: Welcome / Setup -->
-    <div id="welcome-screen" class="screen active">
-        <h1 class="text-4xl md:text-6xl font-black mb-2 text-center text-yellow-400 drop-shadow-lg">EDU FAMILY 100</h1>
-        <h2 class="text-2xl md:text-4xl font-bold mb-2 text-center text-blue-200 uppercase tracking-wider">Showdown</h2>
-        
-        <!-- INDIKATOR VERSI BARU -->
-        <p class="text-green-300 font-bold mb-6 bg-black/30 px-4 py-1 rounded-full border border-green-400">✅ Versi Anti-Macet Aktif</p>
-        
-        <div class="bg-black/40 p-6 md:p-8 rounded-xl border border-blue-500 w-full max-w-2xl mb-8 z-10">
-            <h3 class="text-xl md:text-2xl font-semibold mb-6 text-center border-b border-blue-500/50 pb-2">Topik: Aljabar (Kelas 8)</h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="text-center">
-                    <label class="block text-sm font-medium mb-2 text-blue-300">Nama Tim 1</label>
-                    <input type="text" id="setup-team1" value="TIM A" class="w-full bg-blue-900/50 border border-blue-400 rounded p-3 text-center text-xl font-bold text-white focus:outline-none focus:border-yellow-400">
-                </div>
-                <div class="text-center">
-                    <label class="block text-sm font-medium mb-2 text-red-300">Nama Tim 2</label>
-                    <input type="text" id="setup-team2" value="TIM B" class="w-full bg-red-900/50 border border-red-400 rounded p-3 text-center text-xl font-bold text-white focus:outline-none focus:border-yellow-400">
-                </div>
-            </div>
-        </div>
-
-        <!-- TOMBOL BRUTE FORCE -->
-        <button onclick="forceStartGame()" class="btn-clickable px-8 py-4 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-black text-xl md:text-2xl rounded-full shadow-[0_0_20px_rgba(234,179,8,0.5)] border-2 border-yellow-300">
-            MULAI PERMAINAN <i class="fas fa-play ml-2"></i>
-        </button>
+    <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl animate-pulse-glow"></div>
+        <div class="absolute top-1/3 -right-40 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse-glow" style="animation-delay: 1s;"></div>
+        <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse-glow" style="animation-delay: 2s;"></div>
     </div>
 
-    <!-- Screen 2: Main Game Board -->
-    <div id="game-screen" class="screen w-full max-w-6xl mx-auto">
-        <div class="w-full text-center mb-6">
-            <div class="inline-block bg-yellow-500 text-black font-bold px-6 py-1 rounded-full mb-3 shadow-md">
-                RONDE <span id="round-display">1</span> / 10
-            </div>
-            <h2 id="question-display" class="text-xl md:text-3xl font-semibold text-white drop-shadow-md bg-black/40 p-4 rounded-xl border border-blue-400/50">
-                Pertanyaan memuat...
-            </h2>
-        </div>
-
-        <div class="w-full grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-            <div id="team1-box" class="team-box active-team lg:col-span-1">
-                <input type="text" id="name-team1" class="team-name-input" onchange="updateTeamName(1, this.value)">
-                <div id="score-team1" class="team-score">0</div>
-                <button type="button" onclick="setActiveTeam(1)" class="btn-clickable mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-sm font-bold w-full border border-blue-400 transition-colors">SET AKTIF</button>
-            </div>
-
-            <div class="board-container lg:col-span-2 bg-black/40 p-4 rounded-xl border-4 border-blue-900 shadow-2xl">
-                <div id="strikes-display" class="strike-container mb-4">
-                    <span class="strike-mark" id="strike-1">X</span>
-                    <span class="strike-mark" id="strike-2">X</span>
-                    <span class="strike-mark" id="strike-3">X</span>
-                </div>
-                
-                <div id="answers-container"></div>
-                
-                <div class="mt-4 bg-blue-900/80 border-2 border-blue-400 rounded-lg p-3 text-center flex justify-between items-center">
-                    <span class="font-bold text-lg text-blue-200">TOTAL POIN RONDE:</span>
-                    <span id="round-total" class="font-mono text-3xl font-bold text-yellow-400">0</span>
-                </div>
-            </div>
-
-            <div id="team2-box" class="team-box lg:col-span-1">
-                <input type="text" id="name-team2" class="team-name-input text-red-200" onchange="updateTeamName(2, this.value)">
-                <div id="score-team2" class="team-score text-red-400">0</div>
-                <button type="button" onclick="setActiveTeam(2)" class="btn-clickable mt-4 px-4 py-2 bg-red-700 hover:bg-red-600 rounded text-sm font-bold w-full border border-red-500 transition-colors">SET AKTIF</button>
-            </div>
-        </div>
-
-        <div class="w-full mt-8 bg-black/50 p-6 rounded-xl border border-gray-600 flex flex-col md:flex-row gap-4 items-center justify-between shadow-lg">
-            <div class="flex-1 w-full flex gap-2">
-                <input type="text" id="answer-input" placeholder="Ketik jawaban di sini..." class="flex-1 bg-gray-800 border-2 border-gray-500 rounded-lg p-3 text-xl text-white focus:outline-none focus:border-yellow-400 shadow-inner" onkeypress="handleEnter(event)">
-                <button type="button" onclick="checkAnswer()" class="btn-clickable bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow border border-green-400">
-                    CEK
-                </button>
-            </div>
-            
-            <div class="flex gap-2 w-full md:w-auto">
-                 <button type="button" onclick="addStrike()" class="btn-clickable flex-1 md:flex-none bg-red-600 text-white font-bold px-6 py-3 rounded-lg shadow border border-red-400">
-                    <i class="fas fa-times mr-1"></i> SALAH
-                </button>
-                <button type="button" onclick="bankPoints()" class="btn-clickable flex-1 md:flex-none bg-yellow-600 text-black font-bold px-6 py-3 rounded-lg shadow border border-yellow-400">
-                    <i class="fas fa-coins mr-1"></i> TRANSFER
-                </button>
-                <button type="button" onclick="nextRound()" id="btn-next-round" class="btn-clickable flex-1 md:flex-none bg-blue-600 text-white font-bold px-6 py-3 rounded-lg shadow border border-blue-400 disabled:opacity-50">
-                    LANJUT <i class="fas fa-arrow-right ml-1"></i>
-                </button>
-            </div>
-        </div>
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-slate-900 border border-cyan-500/40 text-cyan-400 px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toastMsg" class="font-medium text-sm">Notifikasi</span>
     </div>
 
-    <!-- Screen 3: Final Score -->
-    <div id="final-screen" class="screen">
-        <canvas id="confetti-canvas"></canvas>
-        <h1 class="text-4xl md:text-5xl font-black mb-2 text-yellow-400 drop-shadow-lg z-10 text-center">PERMAINAN SELESAI!</h1>
-        <h2 id="winner-announcement" class="text-2xl md:text-3xl font-bold mb-12 text-white z-10 text-center">Pemenang: TIM A</h2>
-        
-        <div class="flex flex-col md:flex-row gap-8 mb-12 z-10">
-            <div class="bg-blue-900/80 p-8 rounded-2xl border-4 border-blue-500 text-center shadow-2xl min-w-[250px]">
-                <h3 id="final-name1" class="text-2xl font-bold mb-4 text-blue-200">TIM A</h3>
-                <div id="final-score1" class="text-6xl font-black text-yellow-400 font-mono">0</div>
+    <header class="w-full max-w-6xl mx-auto px-4 pt-6 pb-4 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-slate-800/80">
+        <div class="flex items-center gap-3 text-center md:text-left">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-purple-600 flex items-center justify-center text-white text-2xl shadow-lg shadow-cyan-500/20">
+                <i class="fa-solid fa-calculator"></i>
             </div>
-            <div class="bg-red-900/80 p-8 rounded-2xl border-4 border-red-500 text-center shadow-2xl min-w-[250px]">
-                <h3 id="final-name2" class="text-2xl font-bold mb-4 text-red-200">TIM B</h3>
-                <div id="final-score2" class="text-6xl font-black text-yellow-400 font-mono">0</div>
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-purple-400">
+                    Kartu Belajar Aljabar
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400">Materi & Latihan Soal Matematika Aljabar Interaktif</p>
             </div>
         </div>
 
-        <button type="button" onclick="resetGame()" class="btn-clickable z-10 px-8 py-3 bg-white text-blue-900 font-bold text-xl rounded-full shadow-lg">
-            MAIN LAGI <i class="fas fa-redo ml-2"></i>
-        </button>
-    </div>
+        <!-- Mode Switcher & Stats -->
+        <div class="flex items-center gap-2">
+            <button id="btnModeSingle" onclick="switchView('single')" class="px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-xs sm:text-sm shadow-lg shadow-cyan-500/20 transition-all">
+                <i class="fa-solid fa-clone mr-1.5"></i> Mode Flashcard
+            </button>
+            <button id="btnModeGrid" onclick="switchView('grid')" class="px-4 py-2 bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 rounded-xl text-xs sm:text-sm transition-all">
+                <i class="fa-solid fa-border-all mr-1.5"></i> Semua Soal (Daftar)
+            </button>
+        </div>
+    </header>
 
-    <script>
-        let currentRound = 0;
-        let scores = { team1: 0, team2: 0 };
-        let activeTeam = 1;
-        let strikes = 0;
-        let roundTotal = 0;
-        let answersRevealed = 0;
-        let roundData = null;
-        let revealedIndexes = [];
+    <main class="w-full max-w-5xl mx-auto px-4 py-6 flex-1 flex flex-col justify-center items-center">
 
-        function formatMathText(text) {
-            if (!text) return '';
-            return text.replace(/\$([^\$]+)\$/g, '<span class="answer-text font-serif italic">$1</span>')
-                       .replace(/\^2/g, '²')
-                       .replace(/\\times/g, '×');
-        }
+        <!-- Progress and Filter Bar -->
+        <div class="w-full mb-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/60 backdrop-blur-md p-4 rounded-2xl border border-slate-800/80">
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Kemajuan:</span>
+                <div class="flex-1 sm:w-48 bg-slate-800 rounded-full h-3 overflow-hidden border border-slate-700/50">
+                    <div id="progressBar" class="bg-gradient-to-r from-cyan-500 to-purple-500 h-full w-0 transition-all duration-300"></div>
+                </div>
+                <span id="progressText" class="text-xs font-bold text-cyan-400 font-mono">0 / 25</span>
+            </div>
 
-        const questionBank = [
-          { round: 1, question: "Apa sajakah istilah atau unsur utama dalam bentuk aljabar 3x + 5?", answers: [{ rank: 1, points: 100, text: "Variabel", keywords: ["variabel", "variable", "peubah", "huruf", "x"] }, { rank: 2, points: 80, text: "Koefisien", keywords: ["koefisien", "angaka variabel", "angka depan x", "3"] }, { rank: 3, points: 60, text: "Konstanta", keywords: ["konstanta", "angka saja", "tetapan", "5"] }, { rank: 4, points: 40, text: "Suku", keywords: ["suku", "terms", "bagian aljabar", "suku sejenis"] }, { rank: 5, points: 20, text: "Operasi Hitung", keywords: ["operasi", "tambah", "penjumlahan", "simbol +", "plus"] }] },
-          { round: 2, question: "Proses pemfaktoran ab + ac = a(b + c) merupakan kebalikan dari operasi matematika apa saja?", answers: [{ rank: 1, points: 100, text: "Perkalian Aljabar", keywords: ["perkalian", "kali", "perkalian aljabar", "mengali"] }, { rank: 2, points: 80, text: "Pengembangan / Jabaran", keywords: ["jabaran", "penjabaran", "ekspansi", "perluasan", "membuka kurung"] }, { rank: 3, points: 60, text: "Sifat Distributif", keywords: ["distributif", "sifat distributif", "pembagian distributif"] }, { rank: 4, points: 40, text: "Pengelompokan Suku", keywords: ["pengelompokan", "kelompok suku", "grouping"] }, { rank: 5, points: 20, text: "Pembagian Suku", keywords: ["pembagian", "bagi", "pembagi"] }] },
-          { round: 3, question: "Sebutkan contoh bentuk aljabar yang bisa difaktorkan menggunakan faktor persekutuan (FPB)!", answers: [{ rank: 1, points: 100, text: "2x + 4", keywords: ["2x+4", "2x + 4", "dua x plus empat", "2x tambah 4"] }, { rank: 2, points: 80, text: "3x² + 6x", keywords: ["3x^2+6x", "3x2+6x", "3x kuadrat + 6x", "3x kuadrat tambah 6x"] }, { rank: 3, points: 60, text: "5xy - 10x", keywords: ["5xy-10x", "5xy - 10x", "5xy min 10x", "5xy kurang 10x"] }, { rank: 4, points: 40, text: "4a + 8b", keywords: ["4a+8b", "4a + 8b", "4a tambah 8b"] }, { rank: 5, points: 20, text: "x² + x", keywords: ["x^2+x", "x2+x", "x kuadrat + x", "x kuadrat tambah x"] }] },
-          { round: 4, question: "Apa saja langkah awal ketika hendak memfaktorkan bentuk aljabar 6x² + 9x?", answers: [{ rank: 1, points: 100, text: "Cari FPB Koefisien (yaitu 3)", keywords: ["fpb angka", "fpb koefisien", "cari fpb", "3", "fpb 6 dan 9"] }, { rank: 2, points: 80, text: "Cari FPB Variabel (yaitu x)", keywords: ["fpb variabel", "variabel sama", "x", "keluarkan x"] }, { rank: 3, points: 60, text: "Keluarkan Faktor 3x", keywords: ["keluarkan 3x", "3x diluar", "faktor 3x"] }, { rank: 4, points: 40, text: "Bagi Suku Asli dengan 3x", keywords: ["bagi 3x", "pembagian suku", "membagi suku"] }, { rank: 5, points: 20, text: "Tulis Sisa Suku di Kurung", keywords: ["dalam kurung", "sisa dalam kurung", "2x+3", "tulis kurung"] }] },
-          { round: 5, question: "Sebutkan nama-nama bentuk kuadrat atau sifat khusus dalam pemfaktoran aljabar!", answers: [{ rank: 1, points: 100, text: "Selisih Dua Kuadrat", keywords: ["selisih dua kuadrat", "selisih kuadrat", "x2-y2", "a2-b2"] }, { rank: 2, points: 80, text: "Kuadrat Sempurna", keywords: ["kuadrat sempurna", "perfect square", "bentuk kuadrat sempurna"] }, { rank: 3, points: 60, text: "Trinomial / Suku Tiga", keywords: ["trinomial", "suku tiga", "persamaan kuadrat"] }, { rank: 4, points: 40, text: "Binomial / Suku Dua", keywords: ["binomial", "suku dua"] }, { rank: 5, points: 20, text: "Bentuk Distributif", keywords: ["distributif", "sifat distributif"] }] },
-          { round: 6, question: "Jika (x + 3)(x + 2) dikalikan, apa saja suku hasil penjabarannya sebelum disederhanakan?", answers: [{ rank: 1, points: 100, text: "x²", keywords: ["x^2", "x2", "x kuadrat", "x kali x"] }, { rank: 2, points: 80, text: "2x", keywords: ["2x", "dua x", "x kali 2"] }, { rank: 3, points: 60, text: "3x", keywords: ["3x", "tiga x", "3 kali x"] }, { rank: 4, points: 40, text: "6", keywords: ["6", "enam", "3 kali 2"] }, { rank: 5, points: 20, text: "x² + 5x + 6 (Bentuk Akhir)", keywords: ["x^2+5x+6", "x2+5x+6", "hasil akhir", "x kuadrat plus 5x plus 6"] }] },
-          { round: 7, question: "Sebutkan bentuk hasil pemfaktoran dari selisih dua kuadrat x² - 16!", answers: [{ rank: 1, points: 100, text: "(x - 4)", keywords: ["x-4", "x - 4", "x minus 4", "x kurang 4"] }, { rank: 2, points: 80, text: "(x + 4)", keywords: ["x+4", "x + 4", "x plus 4", "x tambah 4"] }, { rank: 3, points: 60, text: "(x - 4)(x + 4)", keywords: ["(x-4)(x+4)", "(x+4)(x-4)", "x-4 x+4"] }, { rank: 4, points: 40, text: "Akar dari 16 adalah 4", keywords: ["4", "akar 16", "empat"] }, { rank: 5, points: 20, text: "Perkalian 2 Kurung Beda Tanda", keywords: ["beda tanda", "plus dan minus", "tambah dan kurang"] }] },
-          { round: 8, question: "Apa saja syarat dua bilangan p dan q untuk memfaktorkan bentuk x² + bx + c?", answers: [{ rank: 1, points: 100, text: "Jika Dikalikan Hasilnya c", keywords: ["dikalikan c", "kali c", "hasil kali c", "p x q = c", "p*q=c"] }, { rank: 2, points: 80, text: "Jika Dijumlahkan Hasilnya b", keywords: ["dijumlahkan b", "tambah b", "hasil tambah b", "p + q = b"] }, { rank: 3, points: 60, text: "Memperhatikan Tanda Plus/Min", keywords: ["tanda", "positif negatif", "plus minus", "tanda positif negatif"] }, { rank: 4, points: 40, text: "Mencari Pasangan Faktor c", keywords: ["faktor c", "pasangan faktor", "faktor dari c"] }, { rank: 5, points: 20, text: "Koefisien x² Harus 1", keywords: ["koefisien 1", "depan x2 satu", "a = 1"] }] },
-          { round: 9, question: "Apa kegunaan mempelajari pemfaktoran aljabar?", answers: [{ rank: 1, points: 100, text: "Menyederhanakan Pecahan", keywords: ["menyederhanakan pecahan", "pecahan aljabar", "penyederhanaan"] }, { rank: 2, points: 80, text: "Menyelesaikan Persamaan Kuadrat", keywords: ["persamaan kuadrat", "mencari akar", "mencari x"] }, { rank: 3, points: 60, text: "Menghitung Luas Bangun", keywords: ["luas", "luas persegi", "luas persegi panjang", "geometri", "bangun datar"] }, { rank: 4, points: 40, text: "Hitung Cepat", keywords: ["hitung cepat", "tanpa kalkulator", "trik hitung", "memudahkan perhitungan"] }, { rank: 5, points: 20, text: "Persiapan Fisika / Ekonomi", keywords: ["fisika", "ekonomi", "rumus fisika", "soal cerita", "pelajaran lain"] }] },
-          { round: 10, question: "Sebutkan kesalahan umum yang sering dilakukan siswa saat memfaktorkan aljabar!", answers: [{ rank: 1, points: 100, text: "Salah Tanda Positif/Negatif", keywords: ["salah tanda", "tanda plus minus", "keliru min plus", "negatif", "positif"] }, { rank: 2, points: 80, text: "Lupa Keluarkan Variabel", keywords: ["lupa x", "variabel ketinggalan", "lupa variabel", "faktor variabel"] }, { rank: 3, points: 60, text: "Salah Menentukan FPB Angka", keywords: ["salah fpb", "fpb salah", "salah bagi", "hitung fpb"] }, { rank: 4, points: 40, text: "Tertukar Bentuk Kuadrat", keywords: ["tertukar bentuk", "dikira kuadrat sempurna", "salah rumus selisih", "beda bentuk"] }, { rank: 5, points: 20, text: "Lupa Cek Ulang dgn Perkalian", keywords: ["tidak mengecek", "tidak dikali ulang", "lupa cek", "periksa kembali"] }] }
-        ];
+            <!-- Card Status Badges & Action Toolbar -->
+            <div class="flex items-center gap-2 flex-wrap justify-center">
+                <button onclick="shuffleCards()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-all" title="Acak urutan kartu">
+                    <i class="fa-solid fa-shuffle mr-1 text-cyan-400"></i> Acak Kartu
+                </button>
+                <button onclick="resetProgress()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 rounded-xl text-xs font-medium transition-all" title="Reset penguasaan">
+                    <i class="fa-solid fa-rotate-right mr-1 text-purple-400"></i> Reset
+                </button>
+            </div>
+        </div>
 
-        // --- SISTEM PAKSA (BRUTE FORCE) AGAR TIDAK MACET DI HP ---
-        window.forceStartGame = function() {
-            // Hapus paksa layar pertama
-            document.getElementById('welcome-screen').classList.remove('active');
-            
-            // Tampilkan paksa layar kedua
-            document.getElementById('game-screen').classList.add('active');
-            
-            // Atur nama secara manual tanpa membuat error
-            const n1 = document.getElementById('setup-team1').value || 'TIM A';
-            const n2 = document.getElementById('setup-team2').value || 'TIM B';
-            document.getElementById('name-team1').value = n1;
-            document.getElementById('name-team2').value = n2;
-            
-            // Reset Skor
-            currentRound = 0;
-            scores = { team1: 0, team2: 0 };
-            document.getElementById('score-team1').innerText = "0";
-            document.getElementById('score-team2').innerText = "0";
-            
-            // Load Ronde Langsung
-            loadRound(0);
-        };
+        <!-- ================= SINGLE FLASHCARD VIEW ================= -->
+        <div id="singleView" class="w-full flex flex-col items-center">
 
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-            window.scrollTo(0, 0);
-        }
+            <!-- Card Category & Counter Info -->
+            <div class="w-full max-w-2xl flex items-center justify-between mb-3 px-2">
+                <span id="cardBadge" class="px-3 py-1 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-bold rounded-full">
+                    <i class="fa-solid fa-tag mr-1"></i> Kartu #1 dari 25
+                </span>
+                <span class="text-xs text-slate-400">
+                    <i class="fa-solid fa-hand-pointer mr-1"></i> Klik untuk Membalik
+                </span>
+            </div>
 
-        function updateTeamName(teamNum, name) {
-            if(teamNum === 1) document.getElementById('setup-team1').value = name;
-            if(teamNum === 2) document.getElementById('setup-team2').value = name;
-        }
-
-        function setActiveTeam(teamNum) {
-            activeTeam = teamNum;
-            document.getElementById('team1-box').classList.remove('active-team');
-            document.getElementById('team2-box').classList.remove('active-team');
-            document.getElementById(`team${teamNum}-box`).classList.add('active-team');
-        }
-
-        function loadRound(index) {
-            if (index >= questionBank.length) { endGame(); return; }
-
-            roundData = questionBank[index];
-            currentRound = index;
-            revealedIndexes = [];
-            strikes = 0;
-            roundTotal = 0;
-            answersRevealed = 0;
-            
-            document.getElementById('round-display').innerText = roundData.round;
-            document.getElementById('question-display').innerHTML = formatMathText(roundData.question);
-            document.getElementById('round-total').innerText = '0';
-            
-            updateStrikesUI();
-            
-            const container = document.getElementById('answers-container');
-            container.innerHTML = '';
-            
-            roundData.answers.forEach((ans, i) => {
-                const card = document.createElement('div');
-                card.className = 'flip-card';
-                card.id = `card-${i}`;
-                card.setAttribute('onclick', `manualReveal(${i})`);
-                
-                card.innerHTML = `
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                            <span>${i + 1}</span>
+            <div class="perspective-1000 w-full max-w-2xl h-[380px] sm:h-[400px] cursor-pointer" onclick="flipCurrentCard()">
+                <div id="cardInner" class="flip-card-inner relative w-full h-full duration-500 transform-style-3d transition-transform">
+                    
+                    <!-- FRONT SIDE OF CARD -->
+                    <div class="absolute inset-0 w-full h-full rounded-3xl glass-card p-6 sm:p-8 flex flex-col justify-between backface-hidden shadow-2xl border border-cyan-500/20 hover:border-cyan-500/50 transition-colors">
+                        
+                        <!-- Top Bar Front -->
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs font-semibold border border-purple-500/40">
+                                <i class="fa-solid fa-circle-question mr-1"></i> Pertanyaan / Soal
+                            </span>
+                            <button onclick="event.stopPropagation(); toggleStarCurrent()" id="btnStar" class="w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-yellow-400 transition-colors">
+                                <i class="fa-regular fa-star"></i>
+                            </button>
                         </div>
-                        <div class="flip-card-back">
-                            <span class="text-left w-3/4">${formatMathText(ans.text)}</span>
-                            <span class="points-box">${ans.points}</span>
+
+                        <!-- Card Content Front -->
+                        <div class="my-auto text-center px-2 py-4">
+                            <h3 id="cardFrontText" class="text-lg sm:text-xl font-bold text-slate-100 leading-relaxed mb-4">
+                                Loading...
+                            </h3>
+                            
+                            <!-- Hint Toggle Box -->
+                            <div id="hintBox" class="hidden mt-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-amber-300 text-xs sm:text-sm text-left animate-pulse">
+                                <i class="fa-solid fa-lightbulb text-amber-400 mr-1.5"></i> <span id="hintText"></span>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Bar Front -->
+                        <div class="flex items-center justify-between pt-4 border-t border-slate-800 text-xs">
+                            <button onclick="event.stopPropagation(); toggleHint()" class="text-amber-400 hover:text-amber-300 font-medium flex items-center gap-1.5">
+                                <i class="fa-regular fa-lightbulb"></i> <span id="hintBtnText">Tampilkan Petunjuk</span>
+                            </button>
+                            <span class="text-slate-400 font-bold flex items-center gap-1">
+                                Balik Kartu <i class="fa-solid fa-rotate text-cyan-400 ml-1"></i>
+                            </span>
                         </div>
                     </div>
-                `;
-                container.appendChild(card);
+
+                    <!-- BACK SIDE OF CARD -->
+                    <div class="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-slate-900 via-purple-950/60 to-slate-900 border border-purple-500/40 p-6 sm:p-8 flex flex-col justify-between backface-hidden rotate-y-180 shadow-2xl">
+                        
+                        <!-- Top Bar Back -->
+                        <div class="flex items-center justify-between">
+                            <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 rounded-full text-xs font-semibold border border-emerald-500/40">
+                                <i class="fa-solid fa-circle-check mr-1"></i> Kunci Jawaban
+                            </span>
+                            <span class="text-xs text-purple-300/80 font-mono">Aljabar Solution</span>
+                        </div>
+
+                        <!-- Card Content Back -->
+                        <div class="my-auto text-center px-2 py-2">
+                            <span class="text-xs text-slate-400 uppercase tracking-widest block mb-1">Jawaban Benar:</span>
+                            <div id="cardBackText" class="text-xl sm:text-2xl font-black text-emerald-400 tracking-wide my-2 bg-slate-950/80 py-3 px-6 rounded-2xl border border-emerald-500/30 inline-block max-w-full overflow-x-auto">
+                                Loading...
+                            </div>
+                        </div>
+
+                        <!-- Bottom Bar Back -->
+                        <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+                            <span class="text-xs text-slate-400"><i class="fa-solid fa-arrows-rotate mr-1"></i> Klik untuk balik</span>
+                            <span class="text-xs text-emerald-400 font-bold">Jawaban Terverifikasi ✅</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Card Action Control Buttons -->
+            <div class="w-full max-w-2xl mt-6 flex flex-col sm:flex-row items-center gap-3">
+                <div class="flex gap-2 w-full sm:w-1/2">
+                    <button onclick="markMastery(false)" class="flex-1 py-3 bg-slate-900 hover:bg-slate-800 border border-rose-500/40 hover:border-rose-500 text-rose-400 rounded-2xl font-semibold text-xs sm:text-sm transition-all active:scale-95 shadow-md">
+                        <i class="fa-solid fa-xmark mr-1.5"></i> Belum Paham
+                    </button>
+                    <button onclick="markMastery(true)" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl font-bold text-xs sm:text-sm transition-all active:scale-95 shadow-lg shadow-emerald-600/20">
+                        <i class="fa-solid fa-check mr-1.5"></i> Sudah Paham
+                    </button>
+                </div>
+
+                <div class="flex gap-2 w-full sm:w-1/2">
+                    <button onclick="prevCard()" class="flex-1 py-3 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 rounded-2xl font-semibold text-xs sm:text-sm transition-all active:scale-95">
+                        <i class="fa-solid fa-arrow-left mr-1.5"></i> Sebelumnya
+                    </button>
+                    <button onclick="nextCard()" class="flex-1 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold rounded-2xl text-xs sm:text-sm transition-all active:scale-95 shadow-lg shadow-cyan-500/20">
+                        Berikutnya <i class="fa-solid fa-arrow-right ml-1.5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <p class="text-xs text-slate-500 mt-4 text-center">
+                <i class="fa-solid fa-keyboard mr-1"></i> Gunakan panah <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">←</kbd> <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">→</kbd> untuk berpindah kartu, dan <kbd class="px-1.5 py-0.5 bg-slate-800 rounded border border-slate-700 text-slate-300">Spasi</kbd> untuk membalik kartu.
+            </p>
+
+        </div>
+
+        <!-- ================= ALL CARDS GRID VIEW ================= -->
+        <div id="gridView" class="w-full hidden">
+            <div id="cardsGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dynamically Populated Cards Grid -->
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="w-full max-w-6xl mx-auto px-4 py-6 border-t border-slate-800/80 text-center text-xs text-slate-500 mt-8">
+        <p>© 2026 Kartu Belajar Aljabar Interactive • Siap diunggah ke GitHub Pages</p>
+    </footer>
+
+    <script>
+        // Data 25 Kartu Soal Aljabar
+        const FLASHCARDS_DATA = [
+            {
+                "front": "Apa yang dimaksud dengan Variabel dalam Aljabar?",
+                "back": "Lambang pengganti suatu bilangan yang belum diketahui nilainya dengan jelas. Biasanya dilambangkan dengan huruf kecil seperti $x, y, z, a, b$, dll.",
+                "hint": "Huruf-huruf dalam matematika."
+            },
+            {
+                "front": "Apa itu Koefisien?",
+                "back": "Bilangan yang menyertai variabel pada bentuk aljabar.",
+                "hint": "Angka yang menempel pada huruf."
+            },
+            {
+                "front": "Apa itu Konstanta?",
+                "back": "Suku dari suatu bentuk aljabar yang berupa bilangan dan tidak memuat variabel.",
+                "hint": "Angka yang berdiri sendiri, tanpa huruf."
+            },
+            {
+                "front": "Sebutkan variabel, koefisien, dan konstanta dari bentuk aljabar: $3x + 5$",
+                "back": "Variabel: $x$<br>Koefisien: $3$<br>Konstanta: $5$",
+                "hint": "Identifikasi masing-masing bagian berdasarkan definisinya."
+            },
+            {
+                "front": "Sebutkan variabel, koefisien, dan konstanta dari bentuk aljabar: $2a^2 - 4a + 7$",
+                "back": "Variabel: $a$<br>Koefisien: $2$ dan $-4$<br>Konstanta: $7$",
+                "hint": "Perhatikan tanda negatif pada angka di depan variabel."
+            },
+            {
+                "front": "Apa yang dimaksud dengan Suku Sejenis?",
+                "back": "Suku-suku yang memiliki variabel yang sama dan pangkat dari variabel tersebut juga sama.",
+                "hint": "Huruf dan pangkatnya harus persis sama."
+            },
+            {
+                "front": "Manakah yang merupakan suku sejenis: $3x^2, 2x, -5x^2, 4y$?",
+                "back": "$3x^2$ dan $-5x^2$",
+                "hint": "Cari yang variabel dan pangkatnya persis sama."
+            },
+            {
+                "front": "Sederhanakan bentuk aljabar berikut: $5x + 3x$",
+                "back": "$8x$",
+                "hint": "Jumlahkan koefisiennya karena sukunya sejenis."
+            },
+            {
+                "front": "Sederhanakan bentuk aljabar berikut: $7y - 2y + 4$",
+                "back": "$5y + 4$",
+                "hint": "Hanya suku sejenis yang bisa dijumlahkan atau dikurangkan."
+            },
+            {
+                "front": "Sederhanakan bentuk aljabar berikut: $2a + 3b - a + 5b$",
+                "back": "$a + 8b$",
+                "hint": "Kelompokkan suku-suku sejenis: $(2a - a) + (3b + 5b)$"
+            },
+            {
+                "front": "Selesaikan perkalian aljabar berikut: $3(x + 2)$",
+                "back": "$3x + 6$",
+                "hint": "Gunakan sifat distributif perkalian terhadap penjumlahan."
+            },
+            {
+                "front": "Selesaikan perkalian aljabar berikut: $x(x - 5)$",
+                "back": "$x^2 - 5x$",
+                "hint": "Ingat bahwa $x \\times x = x^2$."
+            },
+            {
+                "front": "Selesaikan perkalian aljabar berikut: $(x + 2)(x + 3)$",
+                "back": "$x^2 + 5x + 6$",
+                "hint": "Gunakan metode FOIL (First, Outer, Inner, Last) atau perkalian pelangi."
+            },
+            {
+                "front": "Selesaikan pembagian aljabar berikut: $\\frac{10xy}{2x}$",
+                "back": "$5y$",
+                "hint": "Bagi angkanya, lalu bagi variabelnya."
+            },
+            {
+                "front": "Apa yang dimaksud dengan Persamaan Linear Satu Variabel (PLSV)?",
+                "back": "Persamaan yang memuat satu variabel dan pangkat tertinggi variabelnya adalah satu.",
+                "hint": "Perhatikan kata 'satu variabel' dan 'linear' (pangkat 1)."
+            },
+            {
+                "front": "Tentukan nilai x dari persamaan: $x + 4 = 10$",
+                "back": "$x = 6$",
+                "hint": "Kurangkan kedua ruas dengan 4."
+            },
+            {
+                "front": "Tentukan nilai y dari persamaan: $3y = 15$",
+                "back": "$y = 5$",
+                "hint": "Bagi kedua ruas dengan 3."
+            },
+            {
+                "front": "Tentukan nilai a dari persamaan: $2a - 5 = 7$",
+                "back": "$a = 6$",
+                "hint": "Tambahkan 5 ke kedua ruas, kemudian bagi dengan 2."
+            },
+            {
+                "front": "Jika $x = 2$, berapakah nilai dari $3x^2 + x - 1$?",
+                "back": "$13$",
+                "hint": "Substitusikan nilai $x = 2$ ke dalam bentuk aljabar."
+            },
+            {
+                "front": "Faktorkan bentuk aljabar berikut: $4x + 8$",
+                "back": "$4(x + 2)$",
+                "hint": "Cari Faktor Persekutuan Terbesar (FPB) dari 4 dan 8."
+            },
+            {
+                "front": "Faktorkan bentuk aljabar berikut: $x^2 + 5x + 6$",
+                "back": "$(x + 2)(x + 3)$",
+                "hint": "Cari dua bilangan yang jika dikalikan hasilnya 6, dan jika dijumlahkan hasilnya 5."
+            },
+            {
+                "front": "Ubahlah ke bentuk aljabar: 'Suatu bilangan dikalikan 3, kemudian dikurangi 5 hasilnya adalah 10'.",
+                "back": "$3x - 5 = 10$",
+                "hint": "Misalkan bilangan yang tidak diketahui itu sebagai $x$."
+            },
+            {
+                "front": "Ubahlah ke bentuk aljabar: 'Jumlah dua bilangan yang berurutan adalah 15'.",
+                "back": "$x + (x + 1) = 15$ atau $2x + 1 = 15$",
+                "hint": "Jika bilangan pertama adalah $x$, maka bilangan berikutnya adalah $(x + 1)$."
+            },
+            {
+                "front": "Sederhanakan bentuk pecahan aljabar: $\\frac{x^2 - 4}{x - 2}$",
+                "back": "$x + 2$",
+                "hint": "Faktorkan pembilang menggunakan selisih dua kuadrat: $a^2 - b^2 = (a+b)(a-b)$."
+            },
+            {
+                "front": "Selesaikan pertidaksamaan linear berikut: $2x - 3 > 5$",
+                "back": "$x > 4$",
+                "hint": "Tambahkan 3 ke kedua ruas, lalu bagi dengan 2."
+            }
+        ];
+
+        // State Management
+        let cardsList = [...FLASHCARDS_DATA];
+        let currentIndex = 0;
+        let isFlipped = false;
+        let hintVisible = false;
+        let currentView = 'single'; // 'single' or 'grid'
+        let masteredCards = new Set();
+        let starredCards = new Set();
+
+        // Helper to Render KaTeX Math Expressions
+        function formatMathText(text) {
+            if (!text) return '';
+            // Replace $expression$ with KaTeX HTML output
+            return text.replace(/\$([^$]+)\$/g, (match, expr) => {
+                try {
+                    return katex.renderToString(expr, { throwOnError: false });
+                } catch (e) {
+                    return expr;
+                }
             });
-            
-            document.getElementById('answer-input').value = '';
-            document.getElementById('btn-next-round').disabled = false; 
         }
 
-        function handleEnter(e) { if (e.key === 'Enter') checkAnswer(); }
+        // Initialize Application State on Load
+        window.onload = function() {
+            loadLocalStorage();
+            renderCurrentCard();
+            updateProgress();
+            setupKeyboardAndTouch();
+        };
 
-        function normalizeString(str) {
-            return str.toLowerCase().replace(/[^\w\s\+]/gi, '').replace(/\s+/g, ' ').trim();
-        }
+        // Render Current Single Flashcard
+        function renderCurrentCard() {
+            const card = cardsList[currentIndex];
+            if (!card) return;
 
-        function checkAnswer() {
-            const inputEl = document.getElementById('answer-input');
-            const inputRaw = inputEl.value;
-            if (!inputRaw.trim()) return;
+            // Reset Flip & Hint State
+            isFlipped = false;
+            hintVisible = false;
+            document.getElementById('cardInner').classList.remove('rotate-y-180');
+            document.getElementById('hintBox').classList.add('hidden');
+            document.getElementById('hintBtnText').textContent = 'Tampilkan Petunjuk';
+
+            // Set Front Content & Back Content
+            document.getElementById('cardFrontText').innerHTML = formatMathText(card.front);
+            document.getElementById('cardBackText').innerHTML = formatMathText(card.back);
+            document.getElementById('hintText').innerHTML = formatMathText(card.hint);
+
+            // Update Badge & Star Icon
+            document.getElementById('cardBadge').innerHTML = `<i class="fa-solid fa-tag mr-1"></i> Kartu #${currentIndex + 1} dari ${cardsList.length}`;
             
-            const inputNorm = normalizeString(inputRaw);
-            let foundIndex = -1;
-
-            for (let i = 0; i < roundData.answers.length; i++) {
-                if (revealedIndexes.includes(i)) continue;
-                const ans = roundData.answers[i];
-                if (ans.keywords.some(kw => inputNorm === normalizeString(kw) || inputNorm.includes(normalizeString(kw)))) {
-                    foundIndex = i; break;
-                }
+            const btnStar = document.getElementById('btnStar');
+            if (starredCards.has(currentIndex)) {
+                btnStar.className = 'w-9 h-9 rounded-full bg-yellow-500/20 border border-yellow-500/50 flex items-center justify-center text-yellow-400 transition-colors';
+                btnStar.innerHTML = '<i class="fa-solid fa-star"></i>';
+            } else {
+                btnStar.className = 'w-9 h-9 rounded-full bg-slate-900/80 hover:bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-yellow-400 transition-colors';
+                btnStar.innerHTML = '<i class="fa-regular fa-star"></i>';
             }
-
-            inputEl.value = '';
-            if (foundIndex !== -1) revealAnswer(foundIndex); else addStrike();
         }
 
-        function revealAnswer(index) {
-            if (revealedIndexes.includes(index)) return;
-            revealedIndexes.push(index);
-            answersRevealed++;
+        // Flip Card Action
+        function flipCurrentCard() {
+            isFlipped = !isFlipped;
+            const inner = document.getElementById('cardInner');
+            if (isFlipped) {
+                inner.classList.add('rotate-y-180');
+            } else {
+                inner.classList.remove('rotate-y-180');
+            }
+        }
+
+        // Navigation Actions
+        function nextCard() {
+            if (currentIndex < cardsList.length - 1) {
+                currentIndex++;
+                renderCurrentCard();
+            } else {
+                currentIndex = 0; // Loop back to start
+                renderCurrentCard();
+                showToast('Kembali ke kartu pertama!', 'fa-circle-info');
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCurrentCard();
+            } else {
+                currentIndex = cardsList.length - 1;
+                renderCurrentCard();
+            }
+        }
+
+        // Toggle Hint Box
+        function toggleHint() {
+            hintVisible = !hintVisible;
+            const hintBox = document.getElementById('hintBox');
+            const hintBtnText = document.getElementById('hintBtnText');
             
-            const card = document.getElementById(`card-${index}`);
-            if(card) card.classList.add('flipped');
-            
-            roundTotal += roundData.answers[index].points;
-            
-            const totalEl = document.getElementById('round-total');
-            totalEl.style.transform = 'scale(1.5)';
-            totalEl.style.color = '#fff';
+            if (hintVisible) {
+                hintBox.classList.remove('hidden');
+                hintBtnText.textContent = 'Sembunyikan Petunjuk';
+            } else {
+                hintBox.classList.add('hidden');
+                hintBtnText.textContent = 'Tampilkan Petunjuk';
+            }
+        }
+
+        // Toggle Starred Card
+        function toggleStarCurrent() {
+            if (starredCards.has(currentIndex)) {
+                starredCards.delete(currentIndex);
+                showToast('Bintang dihapus.');
+            } else {
+                starredCards.add(currentIndex);
+                showToast('Kartu ditandai bintang ⭐');
+            }
+            saveLocalStorage();
+            renderCurrentCard();
+        }
+
+        // Mark Card as Mastered / Not Mastered
+        function markMastery(isMastered) {
+            if (isMastered) {
+                masteredCards.add(currentIndex);
+                showToast('Hebat! Kartu ditandai Sudah Paham ✅', 'fa-circle-check');
+            } else {
+                masteredCards.delete(currentIndex);
+                showToast('Tetap semangat! Kartu dicatat untuk diulang 💪', 'fa-circle-exclamation');
+            }
+            saveLocalStorage();
+            updateProgress();
+            nextCard();
+        }
+
+        // Update Progress Bar
+        function updateProgress() {
+            const count = masteredCards.size;
+            const total = cardsList.length;
+            const percentage = Math.round((count / total) * 100);
+
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${count} / ${total} (${percentage}%)`;
+        }
+
+        // Shuffle Cards Array
+        function shuffleCards() {
+            for (let i = cardsList.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cardsList[i], cardsList[j]] = [cardsList[j], cardsList[i]];
+            }
+            currentIndex = 0;
+            renderCurrentCard();
+            if (currentView === 'grid') renderGridCards();
+            showToast('Kartu berhasil diacak!', 'fa-shuffle');
+        }
+
+        // Reset Progress Data
+        function resetProgress() {
+            masteredCards.clear();
+            starredCards.clear();
+            saveLocalStorage();
+            updateProgress();
+            renderCurrentCard();
+            if (currentView === 'grid') renderGridCards();
+            showToast('Progress penguasaan berhasil direset.');
+        }
+
+        // Switch View Modes (Single Flashcard vs All Cards Grid)
+        function switchView(view) {
+            currentView = view;
+            const singleView = document.getElementById('singleView');
+            const gridView = document.getElementById('gridView');
+            const btnSingle = document.getElementById('btnModeSingle');
+            const btnGrid = document.getElementById('btnModeGrid');
+
+            if (view === 'single') {
+                singleView.classList.remove('hidden');
+                gridView.classList.add('hidden');
+                btnSingle.className = 'px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-xs sm:text-sm shadow-lg shadow-cyan-500/20 transition-all';
+                btnGrid.className = 'px-4 py-2 bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 rounded-xl text-xs sm:text-sm transition-all';
+                renderCurrentCard();
+            } else {
+                singleView.classList.add('hidden');
+                gridView.classList.remove('hidden');
+                btnGrid.className = 'px-4 py-2 bg-cyan-500 text-slate-950 font-bold rounded-xl text-xs sm:text-sm shadow-lg shadow-cyan-500/20 transition-all';
+                btnSingle.className = 'px-4 py-2 bg-slate-900 text-slate-300 border border-slate-800 hover:border-slate-700 rounded-xl text-xs sm:text-sm transition-all';
+                renderGridCards();
+            }
+        }
+
+        // Render All Cards in Grid View
+        function renderGridCards() {
+            const container = document.getElementById('cardsGridContainer');
+            container.innerHTML = '';
+
+            cardsList.forEach((card, idx) => {
+                const isMastered = masteredCards.has(idx);
+                const cardEl = document.createElement('div');
+                cardEl.className = `glass-card rounded-2xl p-5 border transition-all duration-300 flex flex-col justify-between ${isMastered ? 'border-emerald-500/40 bg-emerald-950/10' : 'border-slate-800'}`;
+                
+                cardEl.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-bold text-cyan-400 font-mono">Soal #${idx + 1}</span>
+                            <span class="text-xs px-2 py-0.5 rounded-md font-semibold ${isMastered ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-slate-800 text-slate-400'}">
+                                ${isMastered ? 'Sudah Paham ✅' : 'Belum Paham'}
+                            </span>
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-3 leading-relaxed">${formatMathText(card.front)}</h4>
+                        
+                        <div id="gridAnswer-${idx}" class="hidden mt-3 p-3 bg-slate-950/80 rounded-xl text-xs text-emerald-400 font-medium border border-emerald-500/30">
+                            ${formatMathText(card.back)}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                        <button onclick="toggleGridAnswer(${idx})" class="text-xs text-cyan-400 hover:underline font-semibold">
+                            <i class="fa-solid fa-eye mr-1"></i> Lihat Jawaban
+                        </button>
+                        <button onclick="selectAndGoSingle(${idx})" class="text-xs px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg border border-slate-700">
+                            Buka di Flashcard <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(cardEl);
+            });
+        }
+
+        function toggleGridAnswer(idx) {
+            const ansBox = document.getElementById(`gridAnswer-${idx}`);
+            ansBox.classList.toggle('hidden');
+        }
+
+        function selectAndGoSingle(idx) {
+            currentIndex = idx;
+            switchView('single');
+        }
+
+        // Keyboard Shortcuts & Touch Gestures
+        function setupKeyboardAndTouch() {
+            document.addEventListener('keydown', (e) => {
+                if (currentView !== 'single') return;
+                if (e.code === 'Space') {
+                    e.preventDefault();
+                    flipCurrentCard();
+                } else if (e.code === 'ArrowRight') {
+                    nextCard();
+                } else if (e.code === 'ArrowLeft') {
+                    prevCard();
+                }
+            });
+        }
+
+        // Toast Notification System
+        function showToast(msg, iconClass = 'fa-circle-check') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = msg;
+            toastIcon.className = `fa-solid ${iconClass} text-lg`;
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
             setTimeout(() => {
-                totalEl.innerText = roundTotal;
-                totalEl.style.transform = 'scale(1)';
-                totalEl.style.color = '#fbbf24';
-            }, 200);
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 2500);
         }
 
-        function manualReveal(index) { if (!revealedIndexes.includes(index)) revealAnswer(index); }
-
-        function addStrike() {
-            if (strikes >= 3) return;
-            strikes++;
-            updateStrikesUI();
-            const board = document.querySelector('.board-container');
-            if(board) {
-                board.style.borderColor = '#ef4444';
-                setTimeout(() => { board.style.borderColor = '#1e3a8a'; }, 500);
-            }
+        // Local Storage Sync
+        function saveLocalStorage() {
+            localStorage.setItem('aljabar_mastered', JSON.stringify(Array.from(masteredCards)));
+            localStorage.setItem('aljabar_starred', JSON.stringify(Array.from(starredCards)));
         }
 
-        function updateStrikesUI() {
-            for(let i=1; i<=3; i++) {
-                const strikeEl = document.getElementById(`strike-${i}`);
-                if(strikeEl) {
-                    if (i <= strikes) strikeEl.classList.add('active');
-                    else strikeEl.classList.remove('active');
-                }
-            }
+        function loadLocalStorage() {
+            const mastered = localStorage.getItem('aljabar_mastered');
+            const starred = localStorage.getItem('aljabar_starred');
+
+            if (mastered) masteredCards = new Set(JSON.parse(mastered));
+            if (starred) starredCards = new Set(JSON.parse(starred));
         }
-
-        function bankPoints() {
-            if (roundTotal === 0) return;
-            scores[`team${activeTeam}`] += roundTotal;
-            document.getElementById('score-team1').innerText = scores.team1;
-            document.getElementById('score-team2').innerText = scores.team2;
-            
-            const scoreEl = document.getElementById(`score-team${activeTeam}`);
-            if(scoreEl) {
-                scoreEl.style.transform = 'scale(1.5)';
-                scoreEl.style.color = '#fff';
-                setTimeout(() => {
-                    scoreEl.style.transform = 'scale(1)';
-                    scoreEl.style.color = activeTeam === 1 ? '#fbbf24' : '#f87171';
-                }, 400);
-            }
-
-            roundTotal = 0;
-            document.getElementById('round-total').innerText = roundTotal;
-        }
-
-        function nextRound() { loadRound(currentRound + 1); }
-
-        function endGame() {
-            switchScreen('final-screen');
-            
-            const name1 = document.getElementById('name-team1').value;
-            const name2 = document.getElementById('name-team2').value;
-            
-            document.getElementById('final-name1').innerText = name1;
-            document.getElementById('final-score1').innerText = scores.team1;
-            document.getElementById('final-name2').innerText = name2;
-            document.getElementById('final-score2').innerText = scores.team2;
-            
-            let winnerText = "Hasil Seri!";
-            if (scores.team1 > scores.team2) winnerText = `Pemenang: ${name1}!`;
-            if (scores.team2 > scores.team1) winnerText = `Pemenang: ${name2}!`;
-            
-            document.getElementById('winner-announcement').innerText = winnerText;
-        }
-
-        function resetGame() { switchScreen('welcome-screen'); }
     </script>
 </body>
 </html>
 
 ```
-          { round: 1, question: "Apa sajakah istilah atau unsur utama dalam bentuk aljabar 3x + 5?", answers: [{ rank: 1, points: 100, text: "Variabel", keywords: ["variabel", "variable", "peubah", "huruf", "x"] }, { rank: 2, points: 80, text: "Koefisien", keywords: ["koefisian 
